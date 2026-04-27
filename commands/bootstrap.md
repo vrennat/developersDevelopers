@@ -1,9 +1,9 @@
 ---
-name: init
-description: Bootstrap a project to use developersDevelopers. Creates docs/specs and docs/plans, detects legacy obra/superpowers paths, prints copy-paste commands for migration and templates. Idempotent.
+name: bootstrap
+description: Bootstrap a project to use developersDevelopers. Creates docs/specs and docs/plans, detects legacy obra/superpowers paths, prints copy-paste commands for migration and templates. Idempotent. Named bootstrap (not init) to avoid colliding with Claude Code's built-in /init.
 ---
 
-# /init
+# /bootstrap
 
 One-time project setup for the developersDevelopers workflow. Probes current state, creates missing directories, prints copy-paste commands for everything else.
 
@@ -27,7 +27,7 @@ Idempotent: safe to re-run. The only filesystem mutations are `mkdir docs/specs/
 4. Print state report:
 
 ```
-=== developersDevelopers /init ===
+=== developersDevelopers /bootstrap ===
 Repo:          <git remote get-url origin 2>/dev/null || echo "(no remote)">
 docs/specs/    <created | already exists>
 docs/plans/    <created | already exists>
@@ -83,7 +83,7 @@ Setup complete. Try:
   /brainstorm "<your first idea>"
   /impl "<small fix>"
 
-Run /init again any time — it's idempotent.
+Run /bootstrap again any time — it's idempotent.
 ```
 
 ## Rules
