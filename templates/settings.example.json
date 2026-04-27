@@ -1,0 +1,36 @@
+{
+  "_comment": "Example .claude/settings.json with all three developersDevelopers hooks pre-wired. Copy this into .claude/settings.json (or merge the hooks block into your existing settings.json). Adjust matchers if your project's file extensions differ.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "(tool == \"Edit\" || tool == \"Write\") && tool_input.file_path matches \"\\\\.(ts|tsx|js|jsx|svelte|json|css|md)$\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/auto-format.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "tool == \"Edit\" && tool_input.file_path matches \"\\\\.(ts|tsx|js|jsx|svelte)$\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/console-log-warn.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "(tool == \"Edit\" || tool == \"Write\")",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/git-sync-pre-edit.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

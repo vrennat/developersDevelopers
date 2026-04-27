@@ -73,7 +73,14 @@ To install hook templates:
   cp "$PLUGIN/hooks/"*.sh .claude/hooks/
   chmod +x .claude/hooks/*.sh
 
-Then wire them up in .claude/settings.json. See $PLUGIN/../README.md for matchers.
+To wire them up: a ready-made settings.json with all three hooks is at
+$PLUGIN/settings.example.json. If .claude/settings.json doesn't exist:
+
+  cp "$PLUGIN/settings.example.json" .claude/settings.json
+
+If it already exists, open both files and merge the "hooks" block from
+the example into your existing settings.json (preserve any other keys
+you have like "permissions" or "env").
 ```
 
 8. **Final next steps:**
