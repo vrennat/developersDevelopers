@@ -47,7 +47,7 @@ It creates `docs/specs/` and `docs/plans/`, detects any legacy `docs/superpowers
 - `debug-genius` (sonnet) — deep bug investigation
 
 **Templates** (in `templates/`, opt-in `cp` into your project):
-- `hooks/auto-format.sh`, `hooks/console-log-warn.sh`, `hooks/git-sync-pre-edit.sh`
+- `hooks/git-sync-pre-edit.sh` — block edits when local main is behind origin/main (catches parallel-session divergence)
 - `AGENTS.md` for non-Claude agent workflows
 
 ## The core rule

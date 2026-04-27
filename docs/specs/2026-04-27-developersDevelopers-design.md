@@ -63,8 +63,6 @@ developersDevelopers/
 │   └── debug-genius.md
 ├── templates/
 │   ├── hooks/
-│   │   ├── auto-format.sh
-│   │   ├── console-log-warn.sh
 │   │   └── git-sync-pre-edit.sh
 │   └── AGENTS.md
 └── README.md
@@ -208,9 +206,7 @@ All agent files ≤ 60 lines.
 
 Not auto-installed. Available via documented `cp` from the plugin path or referenced in README.
 
-- `templates/hooks/auto-format.sh` — Prettier + ESLint on edit (TS/JS/Svelte)
-- `templates/hooks/console-log-warn.sh` — warn on `console.log` after edit
-- `templates/hooks/git-sync-pre-edit.sh` — block edits if local main behind origin
+- `templates/hooks/git-sync-pre-edit.sh` — block edits if local main behind origin (catches parallel-session divergence; format/lint enforcement intentionally NOT shipped as a per-edit hook — use pre-commit setup instead)
 - `templates/AGENTS.md` — for non-Claude agents (Cursor/Codex) workflow rules
 
 ## Skill content style (bloat rules)
