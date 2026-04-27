@@ -87,7 +87,3 @@ description: <one specific sentence>
 ```
 
 No skill references another skill by name in its body. Each skill is a leaf — chaining is the user's job.
-
-## Spec
-
-See `docs/specs/2026-04-27-developersDevelopers-design.md`.
