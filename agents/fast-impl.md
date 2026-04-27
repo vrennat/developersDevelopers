@@ -1,6 +1,6 @@
 ---
 name: fast-impl
-description: Use for quick, straightforward implementation of well-defined tasks. Executes clear instructions without deliberation or second-guessing. Ideal for boilerplate, clearly specified functions, mechanical edits across files. Do NOT use for tasks requiring architectural decisions or judgment about approach.
+description: Execute well-defined implementation tasks quickly and without deliberation. No architectural judgment, no scope expansion.
 tools: Glob, Grep, Read, Edit, Write, Bash
 model: haiku
 color: cyan

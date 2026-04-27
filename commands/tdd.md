@@ -26,11 +26,6 @@ Commit after each phase that produces working state (after GREEN, after REFACTOR
 - Refactor only when green. Tests are your safety net.
 - Test behavior, not implementation. Don't mock everything; prefer integration tests where reasonable.
 
-## Coverage targets
-
-- General code: 80%+
-- Critical paths (state mutations, financial logic, validation): 100%
-
 ## When NOT to use
 
 - Quick spike or throwaway script: just write it.

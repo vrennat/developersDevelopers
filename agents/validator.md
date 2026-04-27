@@ -27,4 +27,4 @@ Issues:    [list or "None"]
 Verdict:   READY FOR REVIEW / NEEDS FIXES
 ```
 
-Don't do deep code review, architectural feedback, or style opinions. That's brutal-code-reviewer's job.
+Don't do deep code review, architectural feedback, or style opinions — report issues; the caller decides next steps.

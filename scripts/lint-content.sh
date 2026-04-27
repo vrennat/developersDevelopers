@@ -3,6 +3,13 @@
 # docs/superpowers/specs/2026-04-27-developersDevelopers-design.md (section 4)
 set -euo pipefail
 
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || true
+if [[ -z "$repo_root" ]]; then
+  echo "Must run from inside a git repo" >&2
+  exit 1
+fi
+cd "$repo_root"
+
 errors=0
 
 check_length() {

@@ -36,7 +36,7 @@ Execute work. Input is one of:
 
 7. **On `validator` failure:** dispatch `debug-genius` for diagnosis, then `fast-impl` for fix using debug-genius's output. Max 3 retry cycles before surfacing to user.
 
-8. **Final step:** the `verification-before-completion` skill auto-fires before claiming done. Run the verification command and paste output verbatim.
+8. **Before claiming done:** run the project's verification command (typecheck, test, build) and paste its output verbatim. Do not claim done if it fails.
 
 9. **If Linear ticket:** update status to "In Review".
 
