@@ -13,9 +13,20 @@ Built around one principle: **confirm only when ambiguous.** No mandatory entry 
 
 Uninstall `obra/superpowers` first — they collide on slash command names.
 
+## First-time setup
+
+In any project where you want to use this workflow:
+
+```
+/init
+```
+
+It creates `docs/specs/` and `docs/plans/`, detects any legacy `docs/superpowers/` paths from obra, and prints copy-paste commands for migration, CLAUDE.md, and hook templates. Idempotent — safe to re-run.
+
 ## Inventory
 
 **Slash commands:**
+- `/init` — bootstrap a project for this workflow (run once per repo)
 - `/brainstorm <description>` — idea → spec doc at `docs/specs/`
 - `/impl <input>` — workhorse. Spec file, ticket ID, or freeform description → executed work.
 - `/research <question>` — measurable experimentation loop
@@ -23,6 +34,7 @@ Uninstall `obra/superpowers` first — they collide on slash command names.
 - `/tdd <description>` (opt-in) — strict RED-GREEN-REFACTOR scaffold
 
 **Auto-trigger skills:**
+- `onboarding` — surfaces `/init` when a user mentions installing, configuring, or migrating
 - `systematic-debugging` — fires on observed errors/test failures
 - `verification-before-completion` — fires before any "done/fixed/passing" claim
 
