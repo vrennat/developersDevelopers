@@ -16,7 +16,7 @@ Uninstall `obra/superpowers` first — they collide on slash command names.
 ## Inventory
 
 **Slash commands:**
-- `/brainstorm <description>` — idea → spec doc at `docs/superpowers/specs/`
+- `/brainstorm <description>` — idea → spec doc at `docs/specs/`
 - `/impl <input>` — workhorse. Spec file, ticket ID, or freeform description → executed work.
 - `/research <question>` — measurable experimentation loop
 - `/plan <input>` (opt-in) — spec → written plan when you want one
@@ -78,4 +78,4 @@ No skill references another skill by name in its body. Each skill is a leaf — 
 
 ## Spec
 
-See `docs/superpowers/specs/2026-04-27-developersDevelopers-design.md`.
+See `docs/specs/2026-04-27-developersDevelopers-design.md`.

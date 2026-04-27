@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Lints plugin content files against rules from
-# docs/superpowers/specs/2026-04-27-developersDevelopers-design.md (section 4)
+# docs/specs/2026-04-27-developersDevelopers-design.md (section 4)
 set -euo pipefail
 
 repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || true

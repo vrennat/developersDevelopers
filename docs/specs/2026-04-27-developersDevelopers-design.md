@@ -121,7 +121,7 @@ Idea → spec doc. Lean version:
 
 - Clarity-assessed clarifying questions: ask only when ambiguous
 - Default to recommendation; do NOT pause for "approve this section" gates
-- Output: `docs/superpowers/specs/YYYY-MM-DD-<slug>-design.md`
+- Output: `docs/specs/YYYY-MM-DD-<slug>-design.md`
 - Commits the spec
 - Returns control. Does NOT auto-trigger `/impl` or `/plan`.
 
@@ -131,7 +131,7 @@ Replaces `superpowers:brainstorming`.
 
 Workhorse command. Input is one of:
 
-- Path to a spec file (`/impl docs/superpowers/specs/foo.md`)
+- Path to a spec file (`/impl docs/specs/foo.md`)
 - Linear ticket ID (`/impl ERT-1234`) — fetched via Linear MCP if installed
 - Freeform description (`/impl "make banner sticky on mobile"`)
 
@@ -156,7 +156,7 @@ Replaces `superpowers:writing-plans` + `superpowers:executing-plans` + `superpow
 
 Spec → written plan doc. Only invoke when you genuinely want to review the plan before execution. Most work skips this and goes straight to `/impl`.
 
-Output: `docs/superpowers/plans/YYYY-MM-DD-<slug>.md`
+Output: `docs/plans/YYYY-MM-DD-<slug>.md`
 
 Replaces `superpowers:writing-plans` for the rare case where written plans are wanted.
 
@@ -262,7 +262,7 @@ description: <one specific sentence>
 ## Compatibility
 
 - **Replaces obra/superpowers:** user uninstalls `obra/superpowers` before installing this
-- **Output paths match obra convention** (`docs/superpowers/specs/`, `docs/superpowers/plans/`) so existing files in ertai and Mulligan Labs continue to work
+- **Output paths:** `docs/specs/` and `docs/plans/` (project-local). Existing obra-convention files in other projects (e.g., `docs/superpowers/specs/` in ertai) remain in place; this plugin writes new files to the new convention.
 - **Stack defaults remain in user CLAUDE.md / rules files** — plugin does NOT prescribe SvelteKit/Cloudflare/bun
 - **No new MCP server requirements;** Linear MCP is optional and detected at runtime
 

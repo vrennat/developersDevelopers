@@ -7,7 +7,7 @@ description: Workhorse command. Spec file, ticket ID, or freeform description ->
 
 Execute work. Input is one of:
 
-- Path to spec file: `/impl docs/superpowers/specs/foo.md`
+- Path to spec file: `/impl docs/specs/foo.md`
 - Ticket ID: `/impl ERT-1234` (uses Linear MCP if available)
 - Freeform: `/impl "make banner sticky on mobile"`
 - `--dry-run` flag: print the assessment and stop

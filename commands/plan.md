@@ -5,7 +5,7 @@ description: Spec -> written implementation plan. Opt-in. Use only when you want
 
 # /plan
 
-Generate an explicit implementation plan from a spec. Output: `docs/superpowers/plans/YYYY-MM-DD-<slug>.md`.
+Generate an explicit implementation plan from a spec. Output: `docs/plans/YYYY-MM-DD-<slug>.md`.
 
 Use this when you want a written plan you can review before any code is touched. For most work, `/impl` handles planning inline and saves you a round-trip.
 
@@ -20,7 +20,7 @@ Use this when you want a written plan you can review before any code is touched.
    - Complete code blocks for any code change (no placeholders, no "implement similar to task N")
    - The exact commands to run with expected output
 5. Self-review: spec coverage (every requirement has a task), placeholder scan, type/name consistency across tasks.
-6. Write the plan to `docs/superpowers/plans/YYYY-MM-DD-<slug>.md`.
+6. Write the plan to `docs/plans/YYYY-MM-DD-<slug>.md`.
 7. Commit: `docs: implementation plan for <slug>`.
 8. Report path. Do NOT auto-execute.
 
