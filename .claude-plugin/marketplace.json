@@ -1,0 +1,25 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "vrennat",
+  "metadata": {
+    "description": "Personal Claude Code plugins by Tanner Vass."
+  },
+  "owner": {
+    "name": "vrennat",
+    "email": "tannervass@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "developersDevelopers",
+      "description": "Lean, opinionated workflow plugin. Confirm-only-when-ambiguous routing. Replaces obra/superpowers.",
+      "version": "0.1.2",
+      "source": "./",
+      "author": {
+        "name": "vrennat",
+        "email": "tannervass@gmail.com"
+      },
+      "homepage": "https://github.com/vrennat/developersDevelopers",
+      "tags": ["workflow", "skills", "lean", "personal"]
+    }
+  ]
+}
