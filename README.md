@@ -59,6 +59,7 @@ You don't invoke these — they fire on signals.
 - `systematic-debugging` — fires on observed errors/test failures
 - `verification-before-completion` — fires before any "done/fixed/passing" claim
 - `onboarding` — surfaces `/bootstrap` for new installs and obra/superpowers migrations
+- `plan-hunter` — tournament-style planning (4 lenses → 4 judges → synthesis) for substantive multi-week plans; triggers on `/plan-hunter <idea>` or open-ended planning asks
 
 ### Templates (opt-in `cp` from `templates/`)
 
