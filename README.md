@@ -86,8 +86,9 @@ You don't invoke these — they fire on signals.
 
 ## Contributing
 
-Run `./scripts/lint-content.sh` before committing. It enforces the structural rules:
+Run `./scripts/lint-content.sh` before committing, or wire it to run on every push with `git config core.hooksPath .githooks`. It enforces the structural rules:
 
+- **Version bump guard:** if `commands/`, `skills/`, `agents/`, or `templates/` changed since the last release tag, `plugin.json` must carry a new version (and match `marketplace.json`) — otherwise installs never see the change
 - **Length caps:** skills ≤ 80 lines, commands ≤ 150 lines, agents ≤ 60 lines
 - **Frontmatter:** `name:` and `description:` required; description must be specific enough that no two skills match the same prompt — trigger and skip conditions belong there, length is secondary
 - **No graphviz dot blocks. No `EXTREMELY IMPORTANT/MUST/NEVER` repeated more than once per file.**

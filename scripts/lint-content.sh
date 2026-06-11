@@ -46,6 +46,24 @@ check_banned() {
   fi
 }
 
+# Content changes must ship with a version bump or installs never see them:
+# the plugin cache pins to plugin.json's version, not git HEAD.
+last_tag=$(git describe --tags --abbrev=0 2>/dev/null || true)
+if [[ -n "$last_tag" ]]; then
+  plugin_version=$(grep -o '"version": *"[^"]*"' .claude-plugin/plugin.json | grep -o '[0-9][^"]*')
+  mkt_version=$(grep -o '"version": *"[^"]*"' .claude-plugin/marketplace.json | grep -o '[0-9][^"]*')
+  if [[ "$plugin_version" != "$mkt_version" ]]; then
+    echo "FAIL: plugin.json ($plugin_version) and marketplace.json ($mkt_version) versions disagree"
+    errors=$((errors + 1))
+  fi
+  if ! git diff --quiet "$last_tag" -- commands skills agents templates 2>/dev/null; then
+    if [[ "v$plugin_version" == "$last_tag" ]]; then
+      echo "FAIL: content changed since $last_tag but plugin.json is still $plugin_version -- bump the version"
+      errors=$((errors + 1))
+    fi
+  fi
+fi
+
 for f in skills/*/SKILL.md; do
   [[ -f "$f" ]] || continue
   check_length "$f" 80; check_frontmatter "$f"; check_banned "$f"
