@@ -2,13 +2,13 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the developersDevelopers Claude Code plugin per `docs/superpowers/specs/2026-04-27-developersDevelopers-design.md`.
+**Goal:** Build the developersDevelopers Claude Code plugin per `docs/specs/2026-04-27-developersDevelopers-design.md`.
 
 **Architecture:** Standard Claude Code plugin layout (`.claude-plugin/plugin.json` + `commands/`, `skills/`, `agents/`, `templates/` at repo root). No runtime code — content files only. A bash lint script encodes the structural rules from spec section 4 (length caps, frontmatter, banned phrases) and runs before each commit.
 
 **Tech Stack:** Markdown with YAML frontmatter, Bash for templates and lint, Claude Code plugin format.
 
-**Spec reference:** `docs/superpowers/specs/2026-04-27-developersDevelopers-design.md`
+**Spec reference:** `docs/specs/2026-04-27-developersDevelopers-design.md`
 
 ---
 
@@ -37,7 +37,7 @@ node_modules/
 ```bash
 #!/usr/bin/env bash
 # Lints plugin content files against rules from
-# docs/superpowers/specs/2026-04-27-developersDevelopers-design.md (section 4)
+# docs/specs/2026-04-27-developersDevelopers-design.md (section 4)
 set -euo pipefail
 
 errors=0
@@ -192,7 +192,7 @@ Uninstall `obra/superpowers` first — they collide on slash command names.
 ## Inventory
 
 **Slash commands:**
-- `/brainstorm <description>` — idea → spec doc at `docs/superpowers/specs/`
+- `/brainstorm <description>` — idea → spec doc at `docs/specs/`
 - `/impl <input>` — workhorse. Spec file, ticket ID, or freeform description → executed work.
 - `/research <question>` — measurable experimentation loop
 - `/plan <input>` (opt-in) — spec → written plan when you want one
@@ -254,7 +254,7 @@ No skill references another skill by name in its body. Each skill is a leaf — 
 
 ## Spec
 
-See `docs/superpowers/specs/2026-04-27-developersDevelopers-design.md`.
+See `docs/specs/2026-04-27-developersDevelopers-design.md`.
 ````
 
 - [ ] **Step 2: Commit**
@@ -596,7 +596,7 @@ git commit -m "feat: add verification-before-completion skill"
 ```markdown
 ---
 name: brainstorm
-description: Idea -> spec doc. Lean: clarifying questions only when ambiguous, default to recommendation, no per-section approval gates. Output to docs/superpowers/specs/.
+description: Idea -> spec doc. Lean: clarifying questions only when ambiguous, default to recommendation, no per-section approval gates. Output to docs/specs/.
 ---
 
 # /brainstorm
@@ -605,7 +605,7 @@ Turn an idea into a written spec. Lean version: confirm only when there is genui
 
 ## Procedure
 
-1. Read the user's idea. Skim project context (recent commits, existing docs in `docs/superpowers/`, top-level CLAUDE.md).
+1. Read the user's idea. Skim project context (recent commits, existing docs in `docs/`, top-level CLAUDE.md).
 2. Identify any **genuinely ambiguous** points: 2+ approaches with real tradeoffs, missing requirements, or scope decisions only the user can make. If none, skip to step 4.
 3. Ask all genuinely-ambiguous points in ONE batched message (numbered list). Wait for response. Do not ask one-at-a-time unless the next question depends on the prior answer.
 4. Draft the spec internally:
@@ -613,7 +613,7 @@ Turn an idea into a written spec. Lean version: confirm only when there is genui
    - Architecture / approach (your recommended path; mention alternatives only if you genuinely think the user might want one)
    - Open questions for implementation (resolved with defaults, not TBDs)
    - Acceptance criteria
-5. Write the spec to `docs/superpowers/specs/YYYY-MM-DD-<slug>-design.md`. Today's date, lowercase-dashed slug.
+5. Write the spec to `docs/specs/YYYY-MM-DD-<slug>-design.md`. Today's date, lowercase-dashed slug.
 6. Commit it: `docs: initial design spec for <slug>`.
 7. Tell the user where it is. Do NOT auto-trigger `/impl` or `/plan`.
 
@@ -658,7 +658,7 @@ description: Workhorse command. Spec file, ticket ID, or freeform description ->
 
 Execute work. Input is one of:
 
-- Path to spec file: `/impl docs/superpowers/specs/foo.md`
+- Path to spec file: `/impl docs/specs/foo.md`
 - Ticket ID: `/impl ERT-1234` (uses Linear MCP if available)
 - Freeform: `/impl "make banner sticky on mobile"`
 - `--dry-run` flag: print the assessment and stop
@@ -738,7 +738,7 @@ description: Spec -> written implementation plan. Opt-in. Use only when you want
 
 # /plan
 
-Generate an explicit implementation plan from a spec. Output: `docs/superpowers/plans/YYYY-MM-DD-<slug>.md`.
+Generate an explicit implementation plan from a spec. Output: `docs/plans/YYYY-MM-DD-<slug>.md`.
 
 Use this when you want a written plan you can review before any code is touched. For most work, `/impl` handles planning inline and saves you a round-trip.
 
@@ -753,7 +753,7 @@ Use this when you want a written plan you can review before any code is touched.
    - Complete code blocks for any code change (no placeholders, no "implement similar to task N")
    - The exact commands to run with expected output
 5. Self-review: spec coverage (every requirement has a task), placeholder scan, type/name consistency across tasks.
-6. Write the plan to `docs/superpowers/plans/YYYY-MM-DD-<slug>.md`.
+6. Write the plan to `docs/plans/YYYY-MM-DD-<slug>.md`.
 7. Commit: `docs: implementation plan for <slug>`.
 8. Report path. Do NOT auto-execute.
 
@@ -1140,7 +1140,7 @@ Push to `github.com/vrennat/developersDevelopers`, then on a fresh shell:
 ```
 
 Then in a Claude Code session, verify:
-- `/brainstorm "test"` produces a spec at `docs/superpowers/specs/`
+- `/brainstorm "test"` produces a spec at `docs/specs/`
 - `/impl --dry-run "fix typo in README"` prints clarity + complexity classification
 - `systematic-debugging` skill appears in the available-skills list
 

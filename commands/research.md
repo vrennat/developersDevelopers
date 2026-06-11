@@ -1,6 +1,6 @@
 ---
 name: research
-description: Measurable experimentation loop. Sets up .lab/ directory and runs THINK -> TEST -> REFLECT iterations. Use for A/B decisions, perf tuning, prompt engineering, or any question with a measurable outcome.
+description: Opt-in, explicit /research invocation only. Measurable experimentation loop that sets up a .lab/ directory and runs THINK -> TEST -> REFLECT iterations. Does not auto-trigger on experimentation-shaped asks; use only when the user types /research.
 ---
 
 # /research

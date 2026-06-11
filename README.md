@@ -59,7 +59,10 @@ You don't invoke these — they fire on signals.
 - `systematic-debugging` — fires on observed errors/test failures
 - `verification-before-completion` — fires before any "done/fixed/passing" claim
 - `onboarding` — surfaces `/bootstrap` for new installs and obra/superpowers migrations
-- `plan-hunter` — tournament-style planning (4 lenses → 4 judges → synthesis) for substantive multi-week plans; triggers on `/plan-hunter <idea>` or open-ended planning asks
+
+### Dual-mode skills
+
+- `plan-hunter` — tournament-style planning (4 lenses → 4 judges → synthesis) for substantive multi-week plans. Invoke with `/plan-hunter <idea>`, or it fires on open-ended planning asks.
 
 ### Templates (opt-in `cp` from `templates/`)
 
@@ -86,7 +89,7 @@ You don't invoke these — they fire on signals.
 Run `./scripts/lint-content.sh` before committing. It enforces the structural rules:
 
 - **Length caps:** skills ≤ 80 lines, commands ≤ 150 lines, agents ≤ 60 lines
-- **Frontmatter:** `name:` and `description:` required; description must be one sentence specific enough that no two skills match the same prompt
+- **Frontmatter:** `name:` and `description:` required; description must be specific enough that no two skills match the same prompt — trigger and skip conditions belong there, length is secondary
 - **No graphviz dot blocks. No `EXTREMELY IMPORTANT/MUST/NEVER` repeated more than once per file.**
 - **No skill references another skill by name in its body** — each skill is a leaf; chaining is the user's job
 

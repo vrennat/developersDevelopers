@@ -46,14 +46,18 @@ Standard Claude Code plugin format. Single repo at `github.com/vrennat/developer
 ```
 developersDevelopers/
 ├── .claude-plugin/
-│   └── plugin.json
+│   ├── plugin.json
+│   └── marketplace.json
 ├── commands/
+│   ├── bootstrap.md
 │   ├── brainstorm.md
 │   ├── impl.md
 │   ├── plan.md
 │   ├── research.md
 │   └── tdd.md
 ├── skills/
+│   ├── onboarding/SKILL.md
+│   ├── plan-hunter/SKILL.md (+ REFERENCE.md)
 │   ├── systematic-debugging/SKILL.md
 │   └── verification-before-completion/SKILL.md
 ├── agents/
@@ -64,7 +68,10 @@ developersDevelopers/
 ├── templates/
 │   ├── hooks/
 │   │   └── git-sync-pre-edit.sh
+│   ├── settings.example.json
 │   └── AGENTS.md
+├── scripts/
+│   └── lint-content.sh
 └── README.md
 ```
 
