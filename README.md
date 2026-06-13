@@ -13,7 +13,7 @@ If you've used `obra/superpowers` and noticed you say "yes, do that" 19 out of 2
 /research "is option A faster?"     → measurable experiment loop
 ```
 
-`/impl` is the workhorse. It assesses every task on two axes — clarity and complexity — and **only asks you a question when there's genuine ambiguity**, not after every section of every plan. Touches one file? Direct edit. Touches five? Spawns subagents in parallel. Bug with a real error? Pulls in `debug-genius`. You decide nothing routine; the plugin decides nothing ambiguous.
+`/impl` is the workhorse. It assesses every task on three axes — clarity, complexity, and stakes — and **only asks you a question when there's genuine ambiguity**, not after every section of every plan. Touches one file? Direct edit. Touches five? Spawns subagents in parallel. Touches auth or money? An independent `adversarial-reviewer` tries to break it first. Bug with a real error? Pulls in `debug-genius`. You decide nothing routine; the plugin decides nothing ambiguous.
 
 ## Install
 
@@ -49,7 +49,8 @@ Creates `docs/specs/` and `docs/plans/`, detects legacy `docs/superpowers/` path
 
 - `fast-impl` (haiku) — execute clear tasks
 - `validator` (haiku) — typecheck + tests
-- `brutal-code-reviewer` (sonnet) — review for risky/architectural changes
+- `brutal-code-reviewer` (sonnet) — routine review for risky/architectural changes
+- `adversarial-reviewer` (sonnet) — independent break-it pass on high-stakes changes (auth, money, data, security, privacy)
 - `debug-genius` (sonnet) — deep bug investigation
 
 ### Auto-trigger skills
@@ -72,15 +73,16 @@ You don't invoke these — they fire on signals.
 
 ## The design rule
 
-**Clarity decides whether to ask. Complexity decides how to route. Never confuse the two.**
+**Clarity decides whether to ask. Complexity decides how to route. Stakes decides how hard to verify. Never confuse the three.**
 
-| Task | Clarity | Complexity | Behavior |
-|---|---|---|---|
-| Card backs render larger than fronts; fix it | clear | 1 file | Just do it. |
-| Add card sorting to hand | ambiguous (sort by? UI?) | 2-3 files | One batched question, then proceed. |
-| Refactor rules engine for layered effects | clear (architecture documented) | >3 files | Just do it via subagent team. |
+| Task | Clarity | Complexity | Stakes | Behavior |
+|---|---|---|---|---|
+| Card backs render larger than fronts; fix it | clear | 1 file | normal | Just do it. |
+| Add card sorting to hand | ambiguous (sort by? UI?) | 2-3 files | normal | One batched question, then proceed. |
+| Refactor rules engine for layered effects | clear (architecture documented) | >3 files | normal | Just do it via subagent team. |
+| Fix the JWT expiry check | clear | 1 file | high | Just do it, then an independent `adversarial-reviewer` pass. |
 
-"Many files touched" is complexity, not ambiguity. "Non-trivial implementation" is complexity, not ambiguity. "I'd like CYA approval" is the rubber-stamp anti-pattern this plugin exists to kill.
+"Many files touched" is complexity, not ambiguity. "Non-trivial implementation" is complexity, not ambiguity. "Touches auth/money/data" is stakes — it forces a verification pass even on a one-file change. "I'd like CYA approval" is the rubber-stamp anti-pattern this plugin exists to kill.
 
 **Escape hatch:** destructive ops (force-push, deploys, money) always confirm. Those are blast-radius gates, not ambiguity gates.
 

@@ -16,10 +16,11 @@ Execute work. Input is one of:
 
 1. **Parse input.** If it matches `[A-Z]+-\d+` and Linear MCP tools (`mcp__plugin_linear_linear__*` or `mcp__claude_ai_Linear__*`) are available, fetch the ticket. If it's a path, read the spec. Otherwise treat as freeform.
 
-2. **Classify clarity AND complexity.**
+2. **Classify clarity, complexity, AND stakes.**
    - Clarity: clear (one obvious approach) or ambiguous (2+ approaches with real tradeoffs, OR missing requirement, OR multi-cause bug).
    - Complexity: simple (1 file, <50 LOC), medium (2-3 files), complex (>3 files).
-   - Print one line: `Clarity: clear/ambiguous | Complexity: simple/medium/complex`.
+   - Stakes: high if it touches auth, money, data integrity, security, or privacy, or is hard to undo; otherwise normal.
+   - Print one line: `Clarity: clear/ambiguous | Complexity: simple/medium/complex | Stakes: normal/high`.
 
 3. **Branch on clarity.**
    - Ambiguous: ask all open questions in ONE batched numbered list. Wait. Then proceed.
@@ -32,15 +33,17 @@ Execute work. Input is one of:
 6. **Branch on complexity.**
    - Simple: implement directly in main session.
    - Medium: spawn 1-2 `fast-impl` agents in parallel via the Agent tool. Then dispatch `validator`.
-   - Complex: `TeamCreate` with name like `impl-<slug>`. Decompose into atomic tasks via `TaskCreate` (one per file, with paths and acceptance criteria, plus `blockedBy` dependencies). Spawn `fast-impl` teammates. Monitor via `SendMessage`. On completion: `TeamDelete`, then dispatch `validator`. If change touches >5 files OR security-sensitive code OR shared infrastructure: also dispatch `brutal-code-reviewer`.
+   - Complex: `TeamCreate` with name like `impl-<slug>`. Decompose into atomic tasks via `TaskCreate` (one per file, with paths and acceptance criteria, plus `blockedBy` dependencies). Spawn `fast-impl` teammates. Monitor via `SendMessage`. On completion: `TeamDelete`, then dispatch `validator`. If change touches >5 files OR shared infrastructure: also dispatch `brutal-code-reviewer` for an architectural pass.
 
-7. **On `validator` failure:** dispatch `debug-genius` for diagnosis, then `fast-impl` for fix using debug-genius's output. Max 3 retry cycles before surfacing to user.
+7. **If `Stakes: high`:** regardless of complexity tier, dispatch `adversarial-reviewer` after implementation — an independent break-it pass that reads the source fresh, distinct from the routine `brutal-code-reviewer`. A one-file auth or payment change still gets it; the complexity gate does not apply to stakes. Resolve blocking findings before claiming done.
 
-8. **Before claiming done:** run the project's verification command (typecheck, test, build) and paste its output verbatim. Do not claim done if it fails.
+8. **On `validator` failure:** dispatch `debug-genius` for diagnosis, then `fast-impl` for fix using debug-genius's output. Max 3 retry cycles before surfacing to user.
 
-9. **If Linear ticket:** update status to "In Review".
+9. **Before claiming done:** run the project's verification command (typecheck, test, build) and paste its output verbatim. Do not claim done if it fails.
 
-10. **Report:**
+10. **If Linear ticket:** update status to "In Review".
+
+11. **Report:**
 ```
 Files modified: <list>
 Verdict: <validator output>
@@ -50,6 +53,7 @@ Next: test locally; commit when ready.
 ## Rules
 
 - "Ambiguous" is strict: 2+ real-tradeoff approaches, missing requirement, or multi-cause bug. NOT "I'd like to confirm this." NOT "this is non-trivial." NOT "this touches many files" (that's complexity).
+- Stakes is orthogonal to clarity and complexity: a clear, simple change can still be high-stakes. When unsure whether something is high-stakes, treat it as high-stakes — an extra review pass costs minutes; skipping it on auth or money is the failure this routing exists to prevent.
 - Do NOT auto-commit work. Do NOT auto-create PRs. The user decides.
 - The escape hatch from `~/.claude/CLAUDE.md` (destructive git, network side effects, money) always confirms regardless of clarity.
 
@@ -60,3 +64,5 @@ Clear + simple: `/impl "card backs render larger than fronts"` -> classify -> di
 Ambiguous + medium: `/impl "add card sorting to hand"` -> ONE batched question (sort by? UI?) -> on answer, spawn 1-2 fast-impl, validator, done.
 
 Clear + complex: `/impl ERT-1234` (refactor rules engine for layered effects, ticket has design) -> TeamCreate, decompose, fast-impl teammates, validator, brutal-code-reviewer (touches >5 files), done.
+
+Clear + simple + high-stakes: `/impl "fix the JWT expiry check"` -> classify (Stakes: high) -> direct fix -> validator -> adversarial-reviewer (independent break-it pass) -> resolve findings -> done.

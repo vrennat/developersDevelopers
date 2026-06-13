@@ -84,16 +84,17 @@ developersDevelopers/
 
 ## Core principle: "confirm only when ambiguous"
 
-Every command and skill follows a two-axis assessment:
+Every command and skill follows a three-axis assessment:
 
 - **Clarity** (clear / ambiguous): is there one obvious approach, or are there 2+ valid approaches with real tradeoffs? Decides whether to *ask*.
 - **Complexity** (simple / medium / complex): file count + LOC bounds (1 / 2-3 / >3). Decides how to *route execution*.
+- **Stakes** (normal / high): does it touch auth, money, data integrity, security, or privacy, or is it hard to undo? Decides *how hard to verify* — orthogonal to file count. (Added in the tale-mode integration; see Addendum.)
 
 **The rule:**
 
-> Clarity decides whether to ask. Complexity decides how to route. Never confuse the two.
+> Clarity decides whether to ask. Complexity decides how to route. Stakes decides how hard to verify. Never confuse the three.
 
-A complex task with one obvious approach is executed silently via team. A simple task with two reasonable approaches gets one batched question.
+A complex task with one obvious approach is executed silently via team. A simple task with two reasonable approaches gets one batched question. A simple, clear task that touches auth still gets an independent adversarial review — stakes do not bend to file count.
 
 **"Ambiguous" definition (strict):**
 
@@ -109,12 +110,13 @@ A complex task with one obvious approach is executed silently via team. A simple
 
 **Examples:**
 
-| Task | Clarity | Complexity | Behavior |
-|---|---|---|---|
-| Card backs render larger than fronts; fix it | clear | simple | Just do it. |
-| Add card sorting to hand | ambiguous | medium | One batched question, then proceed. |
-| Refactor rules engine for layered effects | clear | complex | Just do it via team. |
-| Add dark mode | ambiguous | medium | One batched question. |
+| Task | Clarity | Complexity | Stakes | Behavior |
+|---|---|---|---|---|
+| Card backs render larger than fronts; fix it | clear | simple | normal | Just do it. |
+| Add card sorting to hand | ambiguous | medium | normal | One batched question, then proceed. |
+| Refactor rules engine for layered effects | clear | complex | normal | Just do it via team. |
+| Add dark mode | ambiguous | medium | normal | One batched question. |
+| Fix the JWT expiry check | clear | simple | high | Just do it, then an independent adversarial-reviewer pass. |
 
 **Escape hatch:** the user CLAUDE.md "stop-and-confirm" gates (destructive git, network side effects, money) always confirm regardless of clarity. Those are blast-radius gates, not ambiguity gates.
 
@@ -143,15 +145,16 @@ Workhorse command. Input is one of:
 Internal flow:
 
 1. Read input
-2. Classify clarity + complexity
+2. Classify clarity + complexity + stakes
 3. **Branch on clarity:** ambiguous → batched question, wait. Clear → proceed silently.
 4. **Branch on complexity:**
    - Simple (1 file, <50 LOC): direct implementation by main session
    - Medium (2-3 files): 1-2 parallel `fast-impl` agents → `validator`
-   - Complex (>3 files): `TeamCreate` + atomic task decomposition + `fast-impl` teammates with dependencies → `validator` → `brutal-code-reviewer` if change touches >5 files OR security-sensitive code OR shared infrastructure
-5. `validator` runs typecheck + tests
-6. On validator failure: `debug-genius` for diagnosis, then `fast-impl` for fix. Max 3 retry cycles before surfacing to user.
-7. `verification-before-completion` skill auto-fires before final claim
+   - Complex (>3 files): `TeamCreate` + atomic task decomposition + `fast-impl` teammates with dependencies → `validator` → `brutal-code-reviewer` if change touches >5 files OR shared infrastructure
+5. **Stakes override:** if stakes are high, dispatch `adversarial-reviewer` after implementation regardless of complexity tier — a one-file auth/payment change gets the independent break-it pass too
+6. `validator` runs typecheck + tests
+7. On validator failure: `debug-genius` for diagnosis, then `fast-impl` for fix. Max 3 retry cycles before surfacing to user.
+8. `verification-before-completion` skill auto-fires before final claim
 
 **Linear MCP detection:** if `mcp__plugin_linear_linear__*` tools are available and input matches `[A-Z]+-\d+`, fetch the ticket and update its status (In Progress → In Review). If not, skip silently.
 
@@ -204,7 +207,8 @@ Procedure:
 |---|---|---|
 | `fast-impl` | haiku | Execute clear tasks; no deliberation, no gold-plating |
 | `validator` | haiku | Run typecheck + tests; gate not critic; pass/fail report |
-| `brutal-code-reviewer` | sonnet | Thorough review for risky/architectural changes |
+| `brutal-code-reviewer` | sonnet | Routine thorough review for risky/architectural changes |
+| `adversarial-reviewer` | sonnet | Independent break-it pass on high-stakes changes (added in tale-mode integration) |
 | `debug-genius` | sonnet | Deep bug investigation when validator fails |
 
 All agent files ≤ 60 lines.
@@ -296,3 +300,21 @@ These don't block the plan; they get resolved during implementation:
 - Plugin installs via marketplace on a fresh machine in < 60 seconds
 - Total user-facing primitives: ≤ 11 (5 commands + 2 skills + 4 agents)
 - Spec doc written with `/brainstorm` in <30 minutes by a user familiar with the conventions
+
+---
+
+## Addendum: tale-mode integration (2026-06-13)
+
+Cherry-picked three disciplines from `alicicek/tale-mode` without importing its 8-step loop, "receipts," or opus reviewer — those are the ceremony this plugin exists to avoid. Each landed in an existing primitive where possible; surface grew by exactly one agent.
+
+**Why these three, why now.** tale-mode and developersDevelopers share the same root instinct (right-size process to the task) but throttle on different axes: dD scaled on complexity (file count), tale-mode on stakes (auth/money/data). They are orthogonal, and dD was missing the stakes axis — a one-file change to payment logic classified as `simple` and shipped with no review. That single gap is what made all three concepts worth grafting at once.
+
+1. **Stakes axis (right-size throttle).** Added a third classification axis to `/impl`: `Stakes: normal/high`. High stakes forces `validator` + `adversarial-reviewer` regardless of complexity tier ("when unsure, round up"). The mantra extends to three clauses rather than replacing the existing two — the "never confuse the axes" discipline is the plugin's identity. The CLAUDE.md escape hatch already gated destructive *ops*; this gates *code changes* to sensitive domains, which it did not before.
+
+2. **Independent adversarial reviewer.** New `adversarial-reviewer` agent (sonnet — opus is banned per user rules), kept *separate* from `brutal-code-reviewer` rather than sharpening it: brutal stays the routine architectural/breadth pass, adversarial is the stakes-gated depth pass with an attacker framing (assume author overconfidence, read source fresh, hunt breaks/leaks/races/stale-claims/verification-blind-spots, numbered findings with `file:line` proof). This is the one new primitive; total surface is now 12 (5 commands + 2 skills + 5 agents), a deliberate move past the v1 ≤ 11 cap.
+
+3. **Ground-truth verification (rule, not skill).** Folded into `verification-before-completion` rather than a standalone auto-skill — the trigger ("I am trusting stale memory") is unobservable to the agent doing it, so a freestanding auto-fire skill would be unreliable and risk description-collision. The skill now distinguishes gate claims ("tests pass" → green command) from behavior claims ("the handler rejects expired tokens" → re-read the actual source; equivalence claims must be proven by diff/run/compare). The same "fresh read, cite `file:line`, not memory" discipline is baked into `adversarial-reviewer`.
+
+**Deliberately not imported:** the full 8-step loop, "receipts" (tagging every decision's source — the rubber-stamp energy in a new outfit), a standalone ground-truth skill, a second generic reviewer, and any opus agent.
+
+**Relationship to `plan-hunter`:** same mechanism family (independent agents that don't trust the author) but different stage and target — plan-hunter hardens the *plan going in* (judges scoring drafts pre-build), adversarial-reviewer hardens the *code coming out* (breaking correctness post-build). Complementary bookends, not redundant. Do not consolidate them.
