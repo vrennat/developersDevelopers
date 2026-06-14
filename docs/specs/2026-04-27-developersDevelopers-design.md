@@ -147,14 +147,15 @@ Internal flow:
 1. Read input
 2. Classify clarity + complexity + stakes
 3. **Branch on clarity:** ambiguous → batched question, wait. Clear → proceed silently.
-4. **Branch on complexity:**
+4. **Second look (medium/complex only):** before writing code, one deliberate pass interrogating the chosen approach — what's the reflex default here, what gives it a point of view, what can be cut, is there a simpler path dismissed too fast. A sharpening step, not a stall. Skipped for simple tasks (over-process is its own failure mode).
+5. **Branch on complexity:**
    - Simple (1 file, <50 LOC): direct implementation by main session
    - Medium (2-3 files): 1-2 parallel `fast-impl` agents → `validator`
    - Complex (>3 files): `TeamCreate` + atomic task decomposition + `fast-impl` teammates with dependencies → `validator` → `brutal-code-reviewer` if change touches >5 files OR shared infrastructure
-5. **Stakes override:** if stakes are high, dispatch `adversarial-reviewer` after implementation regardless of complexity tier — a one-file auth/payment change gets the independent break-it pass too
-6. `validator` runs typecheck + tests
-7. On validator failure: `debug-genius` for diagnosis, then `fast-impl` for fix. Max 3 retry cycles before surfacing to user.
-8. `verification-before-completion` skill auto-fires before final claim
+6. **Stakes override:** if stakes are high, dispatch `adversarial-reviewer` after implementation regardless of complexity tier — a one-file auth/payment change gets the independent break-it pass too
+7. `validator` runs typecheck + tests
+8. On validator failure: `debug-genius` for diagnosis, then `fast-impl` for fix. Max 3 retry cycles before surfacing to user.
+9. `verification-before-completion` skill auto-fires before final claim
 
 **Linear MCP detection:** if `mcp__plugin_linear_linear__*` tools are available and input matches `[A-Z]+-\d+`, fetch the ticket and update its status (In Progress → In Review). If not, skip silently.
 

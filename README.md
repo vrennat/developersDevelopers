@@ -13,7 +13,7 @@ If you've used `obra/superpowers` and noticed you say "yes, do that" 19 out of 2
 /research "is option A faster?"     → measurable experiment loop
 ```
 
-`/impl` is the workhorse. It assesses every task on three axes — clarity, complexity, and stakes — and **only asks you a question when there's genuine ambiguity**, not after every section of every plan. Touches one file? Direct edit. Touches five? Spawns subagents in parallel. Touches auth or money? An independent `adversarial-reviewer` tries to break it first. Bug with a real error? Pulls in `debug-genius`. You decide nothing routine; the plugin decides nothing ambiguous.
+`/impl` is the workhorse. It assesses every task on three axes — clarity, complexity, and stakes — and **only asks you a question when there's genuine ambiguity**, not after every section of every plan. Touches one file? Direct edit. Touches five? Spawns subagents in parallel — after a deliberate second look at the approach, not just the first pattern that looks right. Touches auth or money? An independent `adversarial-reviewer` tries to break it first. Bug with a real error? Pulls in `debug-genius`. You decide nothing routine; the plugin decides nothing ambiguous.
 
 ## Install
 

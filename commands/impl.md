@@ -30,20 +30,22 @@ Execute work. Input is one of:
 
 5. **If Linear ticket:** update status to "In Progress" via Linear MCP.
 
-6. **Branch on complexity.**
+6. **Second look (medium/complex only — skip for simple).** Before writing any code, interrogate the direction you just picked, in one deliberate pass. The first approach that looks right is usually the statistically-likely default, not the considered one. Ask: what here is the generic pattern reached for by reflex? What would give this a point of view instead of "looks fine"? What can be cut or tightened? Is there a simpler path dismissed too quickly? One pass, then commit to a direction — a sharpening step, not a stalling loop.
+
+7. **Branch on complexity.**
    - Simple: implement directly in main session.
    - Medium: spawn 1-2 `fast-impl` agents in parallel via the Agent tool. Then dispatch `validator`.
    - Complex: `TeamCreate` with name like `impl-<slug>`. Decompose into atomic tasks via `TaskCreate` (one per file, with paths and acceptance criteria, plus `blockedBy` dependencies). Spawn `fast-impl` teammates. Monitor via `SendMessage`. On completion: `TeamDelete`, then dispatch `validator`. If change touches >5 files OR shared infrastructure: also dispatch `brutal-code-reviewer` for an architectural pass.
 
-7. **If `Stakes: high`:** regardless of complexity tier, dispatch `adversarial-reviewer` after implementation — an independent break-it pass that reads the source fresh, distinct from the routine `brutal-code-reviewer`. A one-file auth or payment change still gets it; the complexity gate does not apply to stakes. Resolve blocking findings before claiming done.
+8. **If `Stakes: high`:** regardless of complexity tier, dispatch `adversarial-reviewer` after implementation — an independent break-it pass that reads the source fresh, distinct from the routine `brutal-code-reviewer`. A one-file auth or payment change still gets it; the complexity gate does not apply to stakes. Resolve blocking findings before claiming done.
 
-8. **On `validator` failure:** dispatch `debug-genius` for diagnosis, then `fast-impl` for fix using debug-genius's output. Max 3 retry cycles before surfacing to user.
+9. **On `validator` failure:** dispatch `debug-genius` for diagnosis, then `fast-impl` for fix using debug-genius's output. Max 3 retry cycles before surfacing to user.
 
-9. **Before claiming done:** run the project's verification command (typecheck, test, build) and paste its output verbatim. Do not claim done if it fails.
+10. **Before claiming done:** run the project's verification command (typecheck, test, build) and paste its output verbatim. Do not claim done if it fails.
 
-10. **If Linear ticket:** update status to "In Review".
+11. **If Linear ticket:** update status to "In Review".
 
-11. **Report:**
+12. **Report:**
 ```
 Files modified: <list>
 Verdict: <validator output>
