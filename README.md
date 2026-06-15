@@ -11,6 +11,9 @@ If you've used `obra/superpowers` and noticed you say "yes, do that" 19 out of 2
 /impl ERT-1234                      → ticket gets read, classified, executed
 /impl docs/specs/foo-design.md      → spec gets routed and built
 /research "is option A faster?"     → measurable experiment loop
+/trim                               → review the diff for what to delete
+/debt                               → audit deliberate routing shortcuts
+/mode cautious                      → tune how often it stops to confirm
 ```
 
 `/impl` is the workhorse. It assesses every task on three axes — clarity, complexity, and stakes — and **only asks you a question when there's genuine ambiguity**, not after every section of every plan. Touches one file? Direct edit. Touches five? Spawns subagents in parallel — after a deliberate second look at the approach, not just the first pattern that looks right. Touches auth or money? An independent `adversarial-reviewer` tries to break it first. Bug with a real error? Pulls in `debug-genius`. You decide nothing routine; the plugin decides nothing ambiguous.
@@ -41,6 +44,9 @@ Creates `docs/specs/` and `docs/plans/`, detects legacy `docs/superpowers/` path
 | `/impl <input>` | The default. Spec file, ticket ID, or freeform description → executed work. |
 | `/brainstorm <idea>` | Idea → spec doc at `docs/specs/`. |
 | `/research <question>` | Measurable experiment loop (THINK → TEST → REFLECT). |
+| `/trim [path]` | Deletion-focused review — only what to remove (over-engineering, reinvented stdlib, dead flexibility). Complements the two reviewers. |
+| `/debt` | Audit `// dD:` routing-decision markers; ledger grouped by file, flags any with no upgrade trigger. |
+| `/mode <level>` | Set confirmation aggressiveness: `cautious` / `default` / `autonomous`. |
 | `/plan <input>` | *(opt-in)* Spec → written plan when you want one to review first. |
 | `/tdd <description>` | *(opt-in)* Strict RED-GREEN-REFACTOR scaffold. |
 | `/bootstrap` | Run once per project. |
@@ -65,6 +71,12 @@ You don't invoke these — they fire on signals.
 
 - `plan-hunter` — tournament-style planning (4 lenses → 4 judges → synthesis) for substantive multi-week plans. Invoke with `/plan-hunter <idea>`, or it fires on open-ended planning asks.
 
+### Hooks (ship with the plugin, no setup)
+
+- **SessionStart context injection** (`hooks/session-start.js`, wired by `hooks/hooks.json`) — on every session start, resume, clear, and compact, the three-axis rubric (clarity / complexity / stakes) and the active `/mode` are injected as ambient context. The routing philosophy stays live even when you never type `/impl`. Light by design: the decision framework only, not `/impl`'s execution logic. SessionStart hooks can't block startup, so it degrades silently if Node is unavailable.
+
+These are the plugin's own auto-loaded hooks — distinct from the opt-in project hook *templates* below, which you copy into a repo yourself.
+
 ### Templates (opt-in `cp` from `templates/`)
 
 - `hooks/git-sync-pre-edit.sh` — block edits when local main is behind origin (catches parallel-session divergence)
@@ -85,6 +97,10 @@ You don't invoke these — they fire on signals.
 "Many files touched" is complexity, not ambiguity. "Non-trivial implementation" is complexity, not ambiguity. "Touches auth/money/data" is stakes — it forces a verification pass even on a one-file change. "I'd like CYA approval" is the rubber-stamp anti-pattern this plugin exists to kill.
 
 **Escape hatch:** destructive ops (force-push, deploys, money) always confirm. Those are blast-radius gates, not ambiguity gates.
+
+**Routing debt (`// dD:`):** when `/impl` makes a borderline classification call, it leaves a `// dD:` marker (`# dD:` for Python/shell) naming the upgrade trigger — `// dD: routed simple, escalate if sorting grows past this file`. `/debt` collects them into a ledger and flags any with no trigger, so deliberate shortcuts stay visible instead of compounding silently.
+
+**Modes (`/mode`):** `cautious` / `default` / `autonomous` tune how aggressively the workflow confirms. `default` is confirm-only-when-ambiguous; `cautious` also confirms before medium/complex work even when clear; `autonomous` proceeds on ambiguity with a stated default. The mode lives at `.claude/dd-mode`, and the SessionStart hook surfaces the active one. Destructive ops and stakes-gated review still confirm in every mode.
 
 ## Contributing
 

@@ -16,15 +16,19 @@ Execute work. Input is one of:
 
 1. **Parse input.** If it matches `[A-Z]+-\d+` and Linear MCP tools (`mcp__plugin_linear_linear__*` or `mcp__claude_ai_Linear__*`) are available, fetch the ticket. If it's a path, read the spec. Otherwise treat as freeform.
 
-2. **Classify clarity, complexity, AND stakes.**
+2. **Read mode, then classify clarity, complexity, AND stakes.**
+   - Mode: read `.claude/dd-mode` (treat absent as `default`). It is `cautious`, `default`, or `autonomous` — set via `/mode`.
    - Clarity: clear (one obvious approach) or ambiguous (2+ approaches with real tradeoffs, OR missing requirement, OR multi-cause bug).
    - Complexity: simple (1 file, <50 LOC), medium (2-3 files), complex (>3 files).
    - Stakes: high if it touches auth, money, data integrity, security, or privacy, or is hard to undo; otherwise normal.
-   - Print one line: `Clarity: clear/ambiguous | Complexity: simple/medium/complex | Stakes: normal/high`.
+   - Print the mode first, then the classification, as the top two lines of output:
+     `Mode: <mode>`
+     `Clarity: clear/ambiguous | Complexity: simple/medium/complex | Stakes: normal/high`
 
-3. **Branch on clarity.**
-   - Ambiguous: ask all open questions in ONE batched numbered list. Wait. Then proceed.
-   - Clear: proceed silently.
+3. **Branch on clarity, modulated by mode.**
+   - `default`: ambiguous → ask all open questions in ONE batched numbered list, wait, then proceed. Clear → proceed silently.
+   - `cautious`: same as default, plus — before executing a medium or complex task even when clarity is clear, print the planned routing and wait for a go-ahead.
+   - `autonomous`: never block on clarity. Ambiguous → pick the most sensible default, state the assumption in one line, and proceed. (Destructive/irreversible ops and stakes-gated review are unaffected by mode — see Rules.)
 
 4. **If `--dry-run`:** print the planned routing and stop.
 
@@ -55,9 +59,10 @@ Next: test locally; commit when ready.
 ## Rules
 
 - "Ambiguous" is strict: 2+ real-tradeoff approaches, missing requirement, or multi-cause bug. NOT "I'd like to confirm this." NOT "this is non-trivial." NOT "this touches many files" (that's complexity).
-- Stakes is orthogonal to clarity and complexity: a clear, simple change can still be high-stakes. When unsure whether something is high-stakes, treat it as high-stakes — an extra review pass costs minutes; skipping it on auth or money is the failure this routing exists to prevent.
+- Stakes is orthogonal to clarity and complexity: a clear, simple change can still be high-stakes. When unsure whether something is high-stakes, treat it as high-stakes — an extra review pass costs minutes; skipping it on auth or money is the failure this routing exists to prevent. Stakes-gated review fires in every mode, including `autonomous`.
+- **Mark borderline routing in-code.** When a classification call is a genuine judgment — routing simple where medium was plausible, treating stakes as normal where high was arguable, skipping a review pass on a borderline change — leave a `// dD:` comment at the relevant line (`# dD:` for Python/shell) that names the upgrade trigger: `// dD: routed simple, escalate if sorting logic grows beyond this file`. Only for real borderline calls, not every edit. `/debt` audits them later.
 - Do NOT auto-commit work. Do NOT auto-create PRs. The user decides.
-- The escape hatch from `~/.claude/CLAUDE.md` (destructive git, network side effects, money) always confirms regardless of clarity.
+- The escape hatch from `~/.claude/CLAUDE.md` (destructive git, network side effects, money) always confirms regardless of clarity or mode.
 
 ## Examples
 

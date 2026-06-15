@@ -319,3 +319,19 @@ Cherry-picked three disciplines from `alicicek/tale-mode` without importing its 
 **Deliberately not imported:** the full 8-step loop, "receipts" (tagging every decision's source — the rubber-stamp energy in a new outfit), a standalone ground-truth skill, a second generic reviewer, and any opus agent.
 
 **Relationship to `plan-hunter`:** same mechanism family (independent agents that don't trust the author) but different stage and target — plan-hunter hardens the *plan going in* (judges scoring drafts pre-build), adversarial-reviewer hardens the *code coming out* (breaking correctness post-build). Complementary bookends, not redundant. Do not consolidate them.
+
+---
+
+## Addendum: v0.3.0 — ambient routing, debt ledger, deletion review, modes (2026-06-15)
+
+Four additions inspired by the ponytail plugin. Theme: make the routing philosophy *ambient and inspectable* rather than only firing inside `/impl`.
+
+1. **SessionStart hook (always-on context).** New `hooks/hooks.json` + `hooks/session-start.js` (Node). On every start/resume/clear/compact, injects the three-axis rubric and the active mode as ambient context via `hookSpecificOutput.additionalContext`. Why: the rubric was only "loaded" when the user typed `/impl`; the philosophy should shape judgment on every turn. Kept deliberately light — the decision framework, not execution steps — so it doesn't re-litigate `/impl`'s logic or balloon every session's token cost. Degrades silently (SessionStart can't block startup).
+
+2. **`// dD:` convention + `/debt`.** Borderline routing calls (`simple` where `medium` was plausible, skipping a review pass on a borderline-stakes change) now leave an in-code `// dD:` marker naming the *upgrade trigger* — the condition under which the shortcut stops being safe. `/debt` greps them into a per-file ledger and flags markers with no trigger as `[no-trigger]`. Why: classification is judgment under uncertainty; the cheap shortcut is invisible until it compounds. The marker makes the decision auditable at the exact line it affects, and the missing-trigger flag is the real signal — a shortcut with no revisit condition is the dangerous kind.
+
+3. **`/trim` — deletion-only review.** A third review lens, orthogonal to the two existing reviewers: `brutal-code-reviewer` (architecture/correctness) and `adversarial-reviewer` (security/break-it) both look for what's *wrong*; `/trim` looks for what shouldn't *exist* (over-engineering, reinvented stdlib, dead flexibility, speculative generality). Terse output (one line per finding, `net: -N lines possible`) keeps it a fast cleanup pass, not a ceremony. Implemented as a command, not an agent — no independent-context requirement, and it usually runs on the working diff the main session already holds.
+
+4. **`/mode` — confirmation aggressiveness.** `cautious` / `default` / `autonomous` tune *whether to ask*, not *how to route* or *how to verify*. Stored at `.claude/dd-mode` (project-local, one word) so it persists across sessions and the SessionStart hook can surface it; `/impl` states it at the top of every run and modulates its clarity branch accordingly. Deliberate invariant: mode never weakens the destructive-op escape hatch or stakes-gated review — those are blast-radius and stakes gates, categorically not ambiguity gates, and collapsing them into a mode would reintroduce exactly the failure the stakes axis was added to prevent.
+
+**Surface after v0.3.0:** 9 commands + 3 auto/dual skills + 5 agents + 1 hook. The ≤ 11-primitive v1 cap is now historical — the plugin has outgrown it deliberately, but each addition still earns its place against the "would I rubber-stamp this?" test.
