@@ -12,14 +12,19 @@
     {
       "name": "developersDevelopers",
       "description": "Lean, opinionated workflow plugin. Confirm-only-when-ambiguous routing. Replaces obra/superpowers.",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "source": "./",
       "author": {
         "name": "vrennat",
         "email": "tannervass@gmail.com"
       },
       "homepage": "https://github.com/vrennat/developersDevelopers",
-      "tags": ["workflow", "skills", "lean", "personal"]
+      "tags": [
+        "workflow",
+        "skills",
+        "lean",
+        "personal"
+      ]
     }
   ]
 }
